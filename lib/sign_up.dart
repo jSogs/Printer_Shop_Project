@@ -4,101 +4,150 @@
  */
 
 import 'package:flutter/material.dart';
+import 'db.dart';
+import 'models/User.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  // Controllers for email and password
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
+  @override
+  void dispose() {
+    // Dispose of controllers when not in use
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // background color
-        backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
 
-        // Top bar
-        appBar: appBar(),
-        //
+      // Top bar
+      appBar: _appBar(),
 
-        // middle of the page
-        body: middle(),
-        //
-
+      // Middle of the page
+      body: _middle(),
     );
   }
 
-// Middle page include input for email, password, and a sign up button
-  Column middle() {
-    return Column(
-          children: [
+  // Middle page includes input for email, password, and a sign-up button
+  Widget _middle() {
+    Future<void> createUser(User newUser) async {
+      var db = MongoDBService().db; // Access the singleton instance
+      var usersCollection = db.collection('UserCluster');
 
-              // Email input
-              TextFormField(
-                  decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Enter your email',
-                  ), 
-              ),
-              //
+      try {
+        await usersCollection.insertOne({
+          'name': newUser.name,
+          'email': newUser.email,
+          'password': newUser.password,
+        });
+      print('User created successfully');
+      } catch (e) {
+        print('Failed to create user: $e');
+      }
+    }
 
-              // Password input
-              TextFormField(
-                  decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Enter your Password',
-                  ), 
-              ),
-              //
-              
-              // Button
-              TextButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                  ),
-                  onPressed: () {}, 
-                  child: Text(
-                      'Sign Me Up!',
-                      style: TextStyle(color: Colors.white), // to ensure the text is visible
-                  ),
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Name input
+          TextFormField(
+            controller: _nameController, // Attach the email controller
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Enter your name',
+            ),
+          ),
 
-              //
-          ],
-      );
+          // Email input
+          TextFormField(
+            controller: _emailController, // Attach the email controller
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Enter your email',
+            ),
+          ),
+
+          // Password input
+          TextFormField(
+            controller: _passwordController, // Attach the password controller
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Enter your Password',
+            ),
+            obscureText: true, // Hide text for password security
+          ),
+
+          const SizedBox(height: 20), // Add some spacing
+
+          // Button
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+            ),
+            onPressed: () async {
+              // Retrieve values from controllers
+              final name = _nameController.text;
+              final email = _emailController.text;
+              final password = _passwordController.text;
+
+              await createUser(User(name: name, email: email, password: password));
+            },
+            child: const Text(
+              'Sign Up',
+              style: TextStyle(color: Colors.white), // Ensures text is visible
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Top Bar
-  AppBar appBar() {
+  AppBar _appBar() {
     return AppBar(
-          // Sign Up Label on top
-          title: Text(
-              'Sign Up',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-              ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 2.0,
-          //
-          
-          // go back button
-          actions: [
-            GestureDetector(
-              onTap: () {
-                
-              },
-              child:
-                  Container(
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(10),
-                      ),
-                  ),
+      title: const Text(
+        'Sign Up',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      elevation: 2.0,
+
+      // Go back button (if needed for navigation)
+      actions: [
+        GestureDetector(
+          onTap: () {
+            Navigator.pop(context); // Go back when tapped
+          },
+          child: Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(10),
             ),
-          ],
-          //
-      );
+          ),
+        ),
+      ],
+    );
   }
 }
