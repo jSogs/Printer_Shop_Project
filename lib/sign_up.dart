@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
 import 'db.dart';
 import 'models/User.dart';
+import './login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -165,20 +166,13 @@ class _SignUpPageState extends State<SignUpPage> {
       elevation: 2.0,
 
       // Go back button (if needed for navigation)
-      actions: [
-        GestureDetector(
-          onTap: () {
-            Navigator.pop(context); // Go back when tapped
-          },
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ],
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => LoginPage()));
+        },
+      ),
+      
     );
   }
 }
