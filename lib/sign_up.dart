@@ -4,6 +4,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'pages/home_page.dart';
 import 'db.dart';
 import 'models/User.dart';
 
@@ -20,6 +22,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   
+  bool isLoading = false;
+
   @override
   void dispose() {
     // Dispose of controllers when not in use
@@ -44,7 +48,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   // Middle page includes input for email, password, and a sign-up button
   Widget _middle() {
-    Future<void> createUser(User newUser) async {
+    // Method to save login state in shared preferences
+    Future<void> setLoginState(bool isLoggedIn) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', isLoggedIn);
+    }
+
+    Future<bool> createUser(User newUser) async {
       var db = MongoDBService().db; // Access the singleton instance
       var usersCollection = db.collection('UserCluster');
 
@@ -55,8 +65,11 @@ class _SignUpPageState extends State<SignUpPage> {
           'password': newUser.password,
         });
       print('User created successfully');
+      await setLoginState(true);
+      return true;
       } catch (e) {
         print('Failed to create user: $e');
+        return false;
       }
     }
 
@@ -95,18 +108,36 @@ class _SignUpPageState extends State<SignUpPage> {
 
           const SizedBox(height: 20), // Add some spacing
 
-          // Button
-          TextButton(
+          isLoading ? 
+            const CircularProgressIndicator(
+                color: Colors.black,
+            )
+          : TextButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
             ),
             onPressed: () async {
+              setState(() => isLoading = true);
               // Retrieve values from controllers
               final name = _nameController.text;
               final email = _emailController.text;
               final password = _passwordController.text;
 
-              await createUser(User(name: name, email: email, password: password));
+              bool signedUp = await createUser(User(name: name, email: email, password: password));
+
+              setState(() => isLoading = false);
+              if (signedUp) {
+                // Navigate to HomePage after successful sign-in
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              } else {
+                // Show error message if sign-in fails
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Sign-in failed')),
+                );
+              }
             },
             child: const Text(
               'Sign Up',
