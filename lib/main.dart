@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:printer_project/db.dart';
+import 'package:printer_shop_app/login.dart';
+import '/db.dart';
 import './sign_up.dart';
+import './login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignUpPage(),
+      home: LoginPage(),
     );
   }
 }
