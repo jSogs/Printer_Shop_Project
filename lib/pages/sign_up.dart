@@ -5,10 +5,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'pages/home_page.dart';
-import 'db.dart';
-import 'models/User.dart';
-import './login.dart';
+import 'home_page.dart';
+import '../db.dart';
+import '../models/User.dart';
+import 'login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

@@ -67,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
 
           const SizedBox(height: 20), // Add some spacing
           
-          
           Row(
             children: [
               // Login Button

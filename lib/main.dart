@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mongo_dart/mongo_dart.dart';
-import 'package:printer_project/db.dart';
+import 'db.dart';
 import '/pages/splash_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'sign_up.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
