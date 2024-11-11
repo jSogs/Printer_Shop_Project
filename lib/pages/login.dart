@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:printer_shop_app/pages/home_page.dart';
 import 'sign_up.dart';
 import '../db.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,6 +28,18 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  // Function to save the unique ID to local storage
+  Future<void> saveUniqueId(String uniqueId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('unique_id', uniqueId);
+  }
+
+  // function to set LoginState
+  Future<void> setLoginState(bool isLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
   @override
@@ -93,6 +107,10 @@ class _LoginPageState extends State<LoginPage> {
 
                   if (user != null) {
                     print("Login successful");
+                    // save unique id
+                    print(user['_id']);
+                    await saveUniqueId(user['_id'].toString());
+                    await setLoginState(false);
                     Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
                   } else {
                     print("Invalid email or password");
