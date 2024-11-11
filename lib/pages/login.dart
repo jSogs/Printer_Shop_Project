@@ -30,10 +30,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Function to save the unique ID to local storage
-  Future<void> saveUniqueId(String uniqueId) async {
+  // Function to save the unique ID and user Name to local storage
+  Future<void> saveUniqueId(String uniqueId, String userName) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('unique_id', uniqueId);
+    await prefs.setString('user_name', userName);
   }
 
   // function to set LoginState
@@ -109,8 +110,9 @@ class _LoginPageState extends State<LoginPage> {
                     print("Login successful");
                     // save unique id
                     print(user['_id']);
-                    await saveUniqueId(user['_id'].toString());
-                    await setLoginState(false);
+                    print(user['name']);
+                    await saveUniqueId(user['_id'].toString(), user['name'].toString());
+                    await setLoginState(true);
                     Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
                   } else {
                     print("Invalid email or password");
