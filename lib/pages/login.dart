@@ -4,7 +4,9 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:printer_shop_app/pages/home_page.dart';
 import 'sign_up.dart';
+import '../db.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -78,6 +80,43 @@ class _LoginPageState extends State<LoginPage> {
                   // Retrieve values from controllers
                   final email = _emailController.text;
                   final password = _passwordController.text;
+
+                  // Access MongoDB instance
+                  var db = MongoDBService().db;
+                  var usersCollection = db.collection('UserCluster');
+
+                  // Find the user
+                  var user = await usersCollection.findOne({
+                    'email': email,
+                    'password': password,
+                  });
+
+                  if (user != null) {
+                    print("Login successful");
+                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
+                  } else {
+                    print("Invalid email or password");
+                    // Show error message to the user
+                    showDialog(
+                      context: context, 
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Invalid email or password"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }, 
+                              child: Text("OK")
+                            ),
+                          ],
+                        );
+                      }
+                    );
+                  }
+
+
                 },
                 child: const Text(
                   'Login',
