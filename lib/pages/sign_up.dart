@@ -50,9 +50,11 @@ class _SignUpPageState extends State<SignUpPage> {
   // Middle page includes input for email, password, and a sign-up button
   Widget _middle() {
     // Method to save login state in shared preferences
-    Future<void> setLoginState(bool isLoggedIn) async {
+    Future<void> setLoginState(bool isLoggedIn, String id, String name) async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', isLoggedIn);
+      await prefs.setString('unique_id', id);
+      await prefs.setString('user_name', name);
     }
 
     Future<bool> createUser(User newUser) async {
@@ -60,13 +62,13 @@ class _SignUpPageState extends State<SignUpPage> {
       var usersCollection = db.collection('UserCluster');
 
       try {
-        await usersCollection.insertOne({
+        var result = await usersCollection.insertOne({
           'name': newUser.name,
           'email': newUser.email,
           'password': newUser.password,
         });
       print('User created successfully');
-      await setLoginState(true);
+      await setLoginState(true, result.id.toString(), newUser.name);
       return true;
       } catch (e) {
         print('Failed to create user: $e');

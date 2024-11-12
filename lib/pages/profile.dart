@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Center(
         child: TextButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+            backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
           ),
           onPressed: () async {
             setLoginState(false);

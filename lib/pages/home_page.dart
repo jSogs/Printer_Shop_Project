@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     return AppBar(
       title: Text(
         pageTitles[currentPageIndex],
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 18,
           fontWeight: FontWeight.bold,

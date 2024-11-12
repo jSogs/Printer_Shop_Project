@@ -4,7 +4,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:printer_shop_app/pages/home_page.dart';
+import '/pages/home_page.dart';
 import 'sign_up.dart';
 import '../db.dart';
 import 'package:shared_preferences/shared_preferences.dart';
