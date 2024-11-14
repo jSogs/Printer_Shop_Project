@@ -66,9 +66,10 @@ class _SignUpPageState extends State<SignUpPage> {
           'name': newUser.name,
           'email': newUser.email,
           'password': newUser.password,
+          'cart': [],
         });
       print('User created successfully');
-      await setLoginState(true, result.id.toString(), newUser.name);
+      await setLoginState(true, result.id.oid, newUser.name);
       return true;
       } catch (e) {
         print('Failed to create user: $e');
@@ -126,7 +127,7 @@ class _SignUpPageState extends State<SignUpPage> {
               final email = _emailController.text;
               final password = _passwordController.text;
 
-              bool signedUp = await createUser(User(name: name, email: email, password: password));
+              bool signedUp = await createUser(User(name: name, email: email, password: password, cart:[]));
 
               setState(() => isLoading = false);
               if (signedUp) {

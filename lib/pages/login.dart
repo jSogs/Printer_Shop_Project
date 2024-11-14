@@ -35,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('unique_id', uniqueId);
     await prefs.setString('user_name', userName);
+    await prefs.setInt('cart_size',0);
   }
 
   // function to set LoginState
@@ -111,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                     // save unique id
                     print(user['_id']);
                     print(user['name']);
-                    await saveUniqueId(user['_id'].toString(), user['name'].toString());
+                    await saveUniqueId(user['_id'].oid, user['name'].toString());
                     await setLoginState(true);
                     Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
                   } else {
