@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '/pages/cart.dart';
 import '/pages/profile.dart';
 import '/pages/shop.dart';
 
@@ -22,15 +22,8 @@ class _HomePageState extends State<HomePage> {
       appBar: _appBar(),
       body: pages[currentPageIndex],
       bottomNavigationBar: _navBar(),
+      endDrawer: _buildDrawer(),
     );
-  }
-
-  Future<int> getCartSize() async{
-    final prefs = await SharedPreferences.getInstance();
-    setState((){
-      cartSize = prefs.getInt('cart_size') ?? 0;
-    });
-    return cartSize;
   }
   // Top Bar
   AppBar _appBar() {
@@ -47,18 +40,23 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       elevation: 2.0,
       actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.sort),
-          tooltip: 'Show Snackbar',
-          onPressed: () {
-          },
-        ),
+        currentPageIndex == 0 ? Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.sort),
+            onPressed: () {
+              // Open the drawer using the context from Builder
+              Scaffold.of(context).openEndDrawer();
+            },
+          ),
+        ) : const SizedBox(),
         IconButton(
           icon: const Badge(
             backgroundColor: Color.fromARGB(255, 175, 128, 197),
             child: Icon(Icons.shopping_cart),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CartPage()));
+          },
         )
       ],
     );
@@ -87,6 +85,34 @@ class _HomePageState extends State<HomePage> {
       },
       selectedIndex: currentPageIndex,
       destinations: destinations,
+    );
+  }
+
+   Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Colors.blue),
+            child: Text('Filters', style: TextStyle(color: Colors.white)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.pop(context); // Close the drawer
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
