@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.shopping_cart),
           ),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CartPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const CartPage()));
           },
         )
       ],

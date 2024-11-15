@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo_dart;
+import 'notifiers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../db.dart';
 
@@ -50,13 +51,18 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
         'name': widget.name,
         'price': widget.price,
         'color': selectedColor?.value ?? Colors.black.value,
-        'quantity': quantity
+        'quantity': quantity,
+        'imageURL': widget.imageURL,
       });
       await usersCollection.updateOne(
         {"_id": mongo_dart.ObjectId.parse(userId)},
         mongo_dart.modify.set("cart", cart),
       );
       await prefs.setInt('cart_size',cart.length);
+      // Update cart in the notifier and notify listeners
+      cartNotifier.value = cart;
+      cartNotifier.notifyListeners(); // Notifies `CartPage` to refresh
+
       print("Item added to cart successfully.");
       return true;
     } catch(e){
