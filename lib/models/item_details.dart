@@ -24,28 +24,35 @@ class ItemDetailModal extends StatefulWidget {
 
 class _ItemDetailModalState extends State<ItemDetailModal> {
   int quantity = 1;
-  final List<Color> availableColors = [Colors.black, Colors.grey, Colors.white, Colors.blue];
+  final List<Color> availableColors = [
+    Colors.black,
+    Colors.grey,
+    Colors.white,
+    Colors.blue
+  ];
   Color? selectedColor;
-  
 
-  Future<bool> addToCart() async{
+  Future<bool> addToCart() async {
     var db = MongoDBService().db;
     var usersCollection = db.collection('UserCluster');
     final prefs = await SharedPreferences.getInstance();
     String userId = prefs.getString('unique_id') ?? "";
-    try{
-      var user = await usersCollection.findOne({"_id": mongo_dart.ObjectId.parse(userId)});
-      if(user == null){
+    try {
+      var user = await usersCollection
+          .findOne({"_id": mongo_dart.ObjectId.parse(userId)});
+      if (user == null) {
         print("User not found.");
         return false;
       }
       List<dynamic> cart = user['cart'] ?? [];
-      for(int i=0; i<cart.length; i++){
-        if(cart[i]['_id'] == widget.id && cart[i]['color']==selectedColor?.value){
+      for (int i = 0; i < cart.length; i++) {
+        if (cart[i]['_id'] == widget.id &&
+            cart[i]['color'] == selectedColor?.value) {
           cart.removeAt(i);
         }
       }
-      print("${widget.id} ${widget.name} ${widget.price} ${selectedColor.toString()} $quantity");
+      print(
+          "${widget.id} ${widget.name} ${widget.price} ${selectedColor.toString()} $quantity");
       cart.add({
         '_id': widget.id,
         'name': widget.name,
@@ -58,18 +65,19 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
         {"_id": mongo_dart.ObjectId.parse(userId)},
         mongo_dart.modify.set("cart", cart),
       );
-      await prefs.setInt('cart_size',cart.length);
+      await prefs.setInt('cart_size', cart.length);
       // Update cart in the notifier and notify listeners
       cartNotifier.value = cart;
       cartNotifier.notifyListeners(); // Notifies `CartPage` to refresh
 
       print("Item added to cart successfully.");
       return true;
-    } catch(e){
+    } catch (e) {
       print("Failed to add item to cart: $e");
       return false;
     }
   }
+
   void incrementQuantity() {
     setState(() {
       quantity++;
@@ -98,15 +106,17 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
               Flexible(
                 child: Text(
                   widget.name,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,  // Truncate if it overflows
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis, // Truncate if it overflows
                 ),
               ),
-              const SizedBox(width: 8),  // Add some spacing
+              const SizedBox(width: 8), // Add some spacing
               Text(
                 '\$${widget.price}',
                 style: const TextStyle(fontSize: 20, color: Colors.grey),
-                overflow: TextOverflow.ellipsis,  // Optional: Truncate if price is too long
+                overflow: TextOverflow
+                    .ellipsis, // Optional: Truncate if price is too long
               ),
             ],
           ),
@@ -127,7 +137,8 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
               ),
               Text(
                 quantity.toString(),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 onPressed: incrementQuantity,
@@ -136,41 +147,41 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
             ],
           ),
           const SizedBox(height: 16),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
                 "Available Colors:",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              
               const SizedBox(width: 10),
-              
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: availableColors.map<Widget>((color){
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedColor = color;
-                          });
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: color,
-                            border: Border.all(
-                              color: selectedColor == color ? const Color.fromARGB(255, 173, 7, 223) : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                          width: 30,
-                          height: 30,
+                children: availableColors.map<Widget>((color) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedColor = color;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        border: Border.all(
+                          color: selectedColor == color
+                              ? const Color.fromARGB(255, 173, 7, 223)
+                              : Colors.transparent,
+                          width: 2,
                         ),
-                      );
-                    }).toList(),
+                      ),
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+                }).toList(),
               ),
             ],
           ),

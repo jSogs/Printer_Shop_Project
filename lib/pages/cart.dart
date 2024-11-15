@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '/pages/checkout.dart';
+
 import '../models/notifiers.dart';
 import '/db.dart';
 import '/models/item_details.dart';
@@ -15,6 +17,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage>{
   List<dynamic> cart = [];
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -25,11 +28,22 @@ class _CartPageState extends State<CartPage>{
     setState(() {
       isLoading = false;
     });
-    cartNotifier.addListener(() {
+    cartNotifier.addListener(_updateCart);
+  }
+
+   @override
+  void dispose() {
+    // Remove the listener when the page is disposed
+    cartNotifier.removeListener(_updateCart);
+    super.dispose();
+  }
+
+  void _updateCart() {
+    if (mounted) {
       setState(() {
         cart = cartNotifier.value;
       });
-    });
+    }
   }
   
   Future<void> getCart() async{
@@ -51,6 +65,19 @@ class _CartPageState extends State<CartPage>{
       return;
     }
   }
+
+  void checkoutCart() {
+    if (cart.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cart is empty!')),
+      );
+      return;
+    }
+
+    // Navigate to a checkout page or trigger further checkout actions here
+    Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutPage(cart: cart)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +113,15 @@ class _CartPageState extends State<CartPage>{
     return isLoading
           ? const Center(child: CircularProgressIndicator()) 
           : cart.isEmpty 
-          ? const Text('Cart is Empty')
+          ? const Center(
+            child: Text(
+              'Cart is empty',
+              style: TextStyle(
+                fontSize: 18, // Increase the font size
+                fontWeight: FontWeight.bold, // Make the text bold
+                color: Colors.black, // Use a muted color
+              )),
+          )
           :ListView.builder(
             padding: const EdgeInsets.all(8),
             itemCount: cart.length,
@@ -95,31 +130,6 @@ class _CartPageState extends State<CartPage>{
               return cartItem(item);
             }
           );
-  }
-
-  Widget _checkoutButton(){
-    return BottomAppBar(
-        color: Colors.white,
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-          child: ElevatedButton(
-            onPressed: (){
-
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50), // Full-width button
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: const Text(
-              'Checkout',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      );
   }
 
   Widget cartItem(var item){
@@ -215,5 +225,28 @@ class _CartPageState extends State<CartPage>{
         )
       )
     );
+  }
+
+  Widget _checkoutButton(){
+    return BottomAppBar(
+        color: Colors.white,
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          child: ElevatedButton(
+            onPressed: checkoutCart,
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50), // Full-width button
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'Checkout',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      );
   }
 }
