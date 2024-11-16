@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 import '../db.dart';
 import '../models/User.dart';
-import 'login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -167,15 +166,6 @@ class _SignUpPageState extends State<SignUpPage> {
       centerTitle: true,
       backgroundColor: Colors.white,
       elevation: 2.0,
-
-      // Go back button (if needed for navigation)
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () {
-          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => LoginPage()));
-        },
-      ),
-      
     );
   }
 }

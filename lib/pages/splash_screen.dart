@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'sign_up.dart';
 import 'home_page.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const SignUpPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     }
   }
