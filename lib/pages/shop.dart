@@ -7,12 +7,14 @@ class ShopPage extends StatefulWidget {
   const ShopPage ({super.key});
 
   @override
-  State<ShopPage> createState() => _ShopPageState();
+  State<ShopPage> createState() => ShopPageState();
 }
 
-class _ShopPageState extends State<ShopPage> {
+class ShopPageState extends State<ShopPage> {
 
-  List<Map<String, dynamic>> printers = [];
+  List<Map<String, dynamic>> allPrinters = [];
+  List<Map<String, dynamic>> filteredPrinters = []; // Filtered data to display
+  Set<String> activeFilters = {}; // Selected printer types
 
   @override
   void initState() {
@@ -20,19 +22,68 @@ class _ShopPageState extends State<ShopPage> {
     fetchPrinters(); // Fetch data on initialization
   }
 
+  // Fetch printers from the MongoDB database
   Future<void> fetchPrinters() async {
     var db = MongoDBService().db;
     var collection = db.collection("ItemCluster");
 
-    var result = await collection.find().toList(); // Fetch all printer data
+    // Fetch all printers first, without any filters
+    var result = await collection.find().toList();
+
     setState(() {
-      printers = result; // Update printers with fetched data
+      allPrinters = result; // Store all printers
+      filteredPrinters = List.from(allPrinters); // Initially show all printers
     });
+
+    print("All Printers: $allPrinters");  // Debug: Print all printers
+
+    _applyFilters(); // Apply filters after loading the data
+  }
+
+  // Update filters when user selects/deselects filter types
+  void updateFilters(Set<String> selectedFilters) {
+    setState(() {
+      activeFilters = selectedFilters;
+    });
+
+    print("Selected filters: $selectedFilters");  // Debug: Log selected filters
+
+    _applyFilters(); // Apply filters whenever the selected filters change
+  }
+
+  // Apply the active filters to the list of printers
+  void _applyFilters() {
+    print("Active Filters: $activeFilters");  // Debug: Log active filters
+    if (activeFilters.isEmpty) {
+      // No filters, show all printers
+      setState(() {
+        filteredPrinters = List.from(allPrinters); // Show all printers
+      });
+    } else {
+      // Apply filters based on activeFilters
+      setState(() {
+        filteredPrinters = allPrinters.where((printer) {
+          // Check if the printer type matches any of the selected filters
+          bool matchesFilter = false;
+          if (activeFilters.contains('Inkjet') && printer['inkjet'] == true) {
+            matchesFilter = true;
+          }
+          if (activeFilters.contains('Laser') && printer['laser'] == true) {
+            matchesFilter = true;
+          }
+          if (activeFilters.contains('Dot Matrix') && printer['dotmatrix'] == true) {
+            matchesFilter = true;
+          }
+          return matchesFilter;
+        }).toList();
+      });
+    }
+    print("Filtered Printers: $filteredPrinters");  // Debug: Print filtered printers
   }
 
   @override
   Widget build(BuildContext context) {
-    return printers.isEmpty
+    return filteredPrinters.isEmpty
           ? const Center(child: CircularProgressIndicator()) // Show loading indicator
           : GridView.builder(
               padding: const EdgeInsets.all(6.0),
@@ -42,9 +93,9 @@ class _ShopPageState extends State<ShopPage> {
                 crossAxisSpacing: 10.0,
                 childAspectRatio: 0.75,
               ),
-              itemCount: printers.length,
+              itemCount: filteredPrinters.length,
               itemBuilder: (context, index) {
-                final printer = printers[index];
+                final printer = filteredPrinters[index];
                 return item(printer['_id'], printer['name'], printer['imageURL'], printer['price']);
               },
             );

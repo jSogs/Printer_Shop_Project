@@ -13,11 +13,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int cartSize = 0;
   int currentPageIndex = 0;
-  static const List<Widget> pages = [ShopPage(), ProfilePage()];
+
+  final GlobalKey<ShopPageState> shopPageKey = GlobalKey<ShopPageState>();
+
   static const List<String> pageTitles = ["Home", "Profile"];
-  
+
+  Set<String> selectedTypes = {}; // Track selected filter types
+
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+          ShopPage(key: shopPageKey), // pass key to be able to call function from ShopPage
+          ProfilePage(),
+        ];
+
     return Scaffold(
       appBar: _appBar(),
       body: pages[currentPageIndex],
@@ -41,6 +50,7 @@ class _HomePageState extends State<HomePage> {
       elevation: 2.0,
       actions: <Widget>[
         currentPageIndex == 0 ? Builder(
+          // filter icon
           builder: (context) => IconButton(
             icon: const Icon(Icons.sort),
             onPressed: () {
@@ -49,6 +59,8 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ) : const SizedBox(),
+
+        // shopping icon
         IconButton(
           icon: const Badge(
             backgroundColor: Color.fromARGB(255, 175, 128, 197),
@@ -62,7 +74,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  //Navigation Bar
+  //Navigation Bar at the bottom
   NavigationBar _navBar(){
     const List<Widget> destinations = [
       NavigationDestination(
@@ -88,7 +100,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+   // drawer for filters feature, home & setting button
    Widget _buildDrawer() {
+    List<String> printerTypes = ['Inkjet', 'Laser', 'Dot Matrix'];
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -97,6 +112,35 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(color: Colors.blue),
             child: Text('Filters', style: TextStyle(color: Colors.white)),
           ),
+
+          const ListTile(
+          title: Text('Filter by Printer Type'),
+          tileColor: Colors.grey,
+        ),
+
+          // Printer type filters
+          ...printerTypes.map((type) {
+            return CheckboxListTile(
+              title: Text(type),
+              value: selectedTypes.contains(type),
+              onChanged: (bool? isChecked) {
+                setState(() {
+                  if (isChecked == true) {
+                    selectedTypes.add(type);
+                  } else {
+                    selectedTypes.remove(type);
+                  }
+
+                  // Debugging: Print selected types
+                  print("Selected types after change: $selectedTypes");
+
+                  // Notify ShopPage to apply the selected filters
+                  shopPageKey.currentState?.updateFilters(selectedTypes);
+                });
+              },
+            );
+          }).toList(),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.home),
             title: const Text('Home'),
