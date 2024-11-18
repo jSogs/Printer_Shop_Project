@@ -65,13 +65,13 @@ class ShopPageState extends State<ShopPage> {
         filteredPrinters = allPrinters.where((printer) {
           // Check if the printer type matches any of the selected filters
           bool matchesFilter = false;
-          if (activeFilters.contains('Inkjet') && printer['inkjet'] == true) {
+          if (activeFilters.contains('Inkjet') && printer['type'] == 'Inkjet') {
             matchesFilter = true;
           }
-          if (activeFilters.contains('Laser') && printer['laser'] == true) {
+          if (activeFilters.contains('Laser') && printer['type'] == 'Laser') {
             matchesFilter = true;
           }
-          if (activeFilters.contains('Dot Matrix') && printer['dotmatrix'] == true) {
+          if (activeFilters.contains('Dot Matrix') && printer['type'] == 'Dot Matrix') {
             matchesFilter = true;
           }
           return matchesFilter;
