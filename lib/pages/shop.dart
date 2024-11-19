@@ -20,6 +20,7 @@ class ShopPageState extends State<ShopPage> {
   void initState() {
     super.initState();
     fetchPrinters(); // Fetch data on initialization
+    updateFilters(activeFilters);
   }
 
   // Fetch printers from the MongoDB database
@@ -64,17 +65,33 @@ class ShopPageState extends State<ShopPage> {
       setState(() {
         filteredPrinters = allPrinters.where((printer) {
           // Check if the printer type matches any of the selected filters
-          bool matchesFilter = false;
-          if (activeFilters.contains('Inkjet') && printer['type'] == 'Inkjet') {
-            matchesFilter = true;
+          bool matchesAllFilters = true;
+
+          if (activeFilters.contains('Inkjet') && printer['type'] != 'Inkjet') {
+            matchesAllFilters = false;
           }
-          if (activeFilters.contains('Laser') && printer['type'] == 'Laser') {
-            matchesFilter = true;
+          if (activeFilters.contains('Laser') && printer['type'] != 'Laser') {
+            matchesAllFilters = false;
           }
-          if (activeFilters.contains('Dot Matrix') && printer['type'] == 'Dot Matrix') {
-            matchesFilter = true;
+          if (activeFilters.contains('Dot Matrix') && printer['type'] != 'Dot Matrix') {
+            matchesAllFilters = false;
           }
-          return matchesFilter;
+          if (activeFilters.contains('Fax') && printer['fax'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Copier') && printer['copier'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Scanner') && printer['scanner'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Full Color') && printer['bothColor'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Black & White') && printer['bothColor'] != false) {
+            matchesAllFilters = false;
+          }
+          return matchesAllFilters;
         }).toList();
       });
     }

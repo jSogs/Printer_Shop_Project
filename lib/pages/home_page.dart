@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
 
    // drawer for filters feature, home & setting button
    Widget _buildDrawer() {
-    List<String> printerTypes = ['Inkjet', 'Laser', 'Dot Matrix'];
+    List<String> printerTypes = ['Inkjet', 'Laser', 'Dot Matrix', 'Fax', 'Copier', 'Scanner', 'Full Color', 'Black & White'];
 
     return Drawer(
       child: ListView(
@@ -112,11 +112,6 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(color: Colors.blue),
             child: Text('Filters', style: TextStyle(color: Colors.white)),
           ),
-
-          const ListTile(
-          title: Text('Filter by Printer Type'),
-          tileColor: Colors.grey,
-        ),
 
           // Printer type filters
           ...printerTypes.map((type) {
@@ -140,21 +135,6 @@ class _HomePageState extends State<HomePage> {
               },
             );
           }).toList(),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
         ],
       ),
     );
