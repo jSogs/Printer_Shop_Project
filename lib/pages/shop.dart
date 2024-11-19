@@ -113,12 +113,31 @@ class ShopPageState extends State<ShopPage> {
               itemCount: filteredPrinters.length,
               itemBuilder: (context, index) {
                 final printer = filteredPrinters[index];
-                return item(printer['_id'], printer['name'], printer['imageURL'], printer['price']);
+
+                // Generate description for each printer
+                String description = printer['type'];
+                if(printer['fax'] == true){
+                    description += ', Fax';
+                }
+                if(printer['copier'] == true){
+                    description += ', Copier';
+                }
+                if(printer['scanner'] == true){
+                    description += ', Scanner';
+                }
+                if(printer['bothColor'] == true){
+                    description += ', Full-Color';
+                }
+                if(printer['scanner'] == true){
+                    description += ', Black and White';
+                }
+
+                return item(printer['_id'], printer['name'], printer['imageURL'], printer['price'], description);
               },
             );
   }
 
-  Widget item(mongo_dart.ObjectId id, String name, String imageURL, String price) {
+  Widget item(mongo_dart.ObjectId id, String name, String imageURL, String price, String description) {
     return GestureDetector(
       onTap:() {
         showModalBottomSheet(
@@ -172,6 +191,13 @@ class ShopPageState extends State<ShopPage> {
             const SizedBox(height: 5.0),
             Text(
               '\$$price',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              description,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.grey[600],
