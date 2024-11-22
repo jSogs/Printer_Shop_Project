@@ -20,6 +20,7 @@ class ShopPageState extends State<ShopPage> {
   void initState() {
     super.initState();
     fetchPrinters(); // Fetch data on initialization
+    updateFilters(activeFilters);
   }
 
   // Fetch printers from the MongoDB database
@@ -64,17 +65,33 @@ class ShopPageState extends State<ShopPage> {
       setState(() {
         filteredPrinters = allPrinters.where((printer) {
           // Check if the printer type matches any of the selected filters
-          bool matchesFilter = false;
-          if (activeFilters.contains('Inkjet') && printer['inkjet'] == true) {
-            matchesFilter = true;
+          bool matchesAllFilters = true;
+
+          if (activeFilters.contains('Inkjet') && printer['type'] != 'Inkjet') {
+            matchesAllFilters = false;
           }
-          if (activeFilters.contains('Laser') && printer['laser'] == true) {
-            matchesFilter = true;
+          if (activeFilters.contains('Laser') && printer['type'] != 'Laser') {
+            matchesAllFilters = false;
           }
-          if (activeFilters.contains('Dot Matrix') && printer['dotmatrix'] == true) {
-            matchesFilter = true;
+          if (activeFilters.contains('Dot Matrix') && printer['type'] != 'Dot Matrix') {
+            matchesAllFilters = false;
           }
-          return matchesFilter;
+          if (activeFilters.contains('Fax') && printer['fax'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Copier') && printer['copier'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Scanner') && printer['scanner'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Full Color') && printer['bothColor'] != true) {
+            matchesAllFilters = false;
+          }
+          if (activeFilters.contains('Black & White') && printer['bothColor'] != false) {
+            matchesAllFilters = false;
+          }
+          return matchesAllFilters;
         }).toList();
       });
     }
@@ -96,12 +113,31 @@ class ShopPageState extends State<ShopPage> {
               itemCount: filteredPrinters.length,
               itemBuilder: (context, index) {
                 final printer = filteredPrinters[index];
-                return item(printer['_id'], printer['name'], printer['imageURL'], printer['price']);
+
+                // Generate description for each printer
+                String description = printer['type'];
+                if(printer['fax'] == true){
+                    description += ', Fax';
+                }
+                if(printer['copier'] == true){
+                    description += ', Copier';
+                }
+                if(printer['scanner'] == true){
+                    description += ', Scanner';
+                }
+                if(printer['bothColor'] == true){
+                    description += ', Full-Color';
+                }
+                if(printer['scanner'] == true){
+                    description += ', Black and White';
+                }
+
+                return item(printer['_id'], printer['name'], printer['imageURL'], printer['price'], description);
               },
             );
   }
 
-  Widget item(mongo_dart.ObjectId id, String name, String imageURL, String price) {
+  Widget item(mongo_dart.ObjectId id, String name, String imageURL, String price, String description) {
     return GestureDetector(
       onTap:() {
         showModalBottomSheet(
@@ -155,6 +191,13 @@ class ShopPageState extends State<ShopPage> {
             const SizedBox(height: 5.0),
             Text(
               '\$$price',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              description,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.grey[600],
