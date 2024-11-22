@@ -10,9 +10,9 @@ class AdminHomePage extends StatelessWidget {
         title: const Text('Admin Home'),  // AppBar for Admin Home page
         backgroundColor: Colors.black,
       ),
-      body: Center(
+      body: const Center(
         child: Text(
-          'Welcome Huzz!',
+          'Welcome Millenial!',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
