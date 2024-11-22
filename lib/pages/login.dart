@@ -8,6 +8,8 @@ import '/pages/home_page.dart';
 import 'sign_up.dart';
 import '../db.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'admin_signin.dart';
+
 
 
 class LoginPage extends StatefulWidget {
@@ -90,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
               // Login Button
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () async {
                   // Retrieve values from controllers
@@ -114,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                     print(user['name']);
                     await saveUniqueId(user['_id'].oid, user['name'].toString());
                     await setLoginState(true);
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
                   } else {
                     print("Invalid email or password");
                     // Show error message to the user
@@ -122,14 +124,14 @@ class _LoginPageState extends State<LoginPage> {
                       context: context, 
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text("Error"),
-                          content: const Text("Invalid email or password"),
+                          title: Text("Error"),
+                          content: Text("Invalid email or password"),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               }, 
-                              child: const Text("OK")
+                              child: Text("OK")
                             ),
                           ],
                         );
@@ -148,22 +150,38 @@ class _LoginPageState extends State<LoginPage> {
               // Register Button
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () {
                     // direct to register page
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignUpPage()));
+                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => SignUpPage()));
                 },
                 child: const Text(
                   'Register',
                   style: TextStyle(color: Colors.white), // Ensures text is visible
                 ),
               ),
+
+
+               // ADMIN LOGIN BUTTON (New Button)
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                ),
+                onPressed: () {
+                  // Navigate to the admin sign-in page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminSignInPage()),
+                  );
+                },
+                child: const Text(
+                  'Admin Login',
+                  style: TextStyle(color: Colors.white), // Ensures text is visible
+                ),
+              ),
             ],
           ),
-
-          
-
         ],
       ),
     );

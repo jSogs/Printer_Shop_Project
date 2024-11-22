@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo_dart;
-import 'package:printer_project/db.dart';
+import '/db.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/models/order_card.dart';
 
