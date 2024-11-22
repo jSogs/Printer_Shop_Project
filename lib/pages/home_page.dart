@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
           ShopPage(key: shopPageKey), // pass key to be able to call function from ShopPage
-          ProfilePage(),
+          const ProfilePage(),
         ];
 
     return Scaffold(
@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             );
-          }).toList(),
+          }),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.home),

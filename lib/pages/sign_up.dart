@@ -117,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
             )
           : TextButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+              backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
             ),
             onPressed: () async {
               setState(() => isLoading = true);

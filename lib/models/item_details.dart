@@ -153,7 +153,7 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
               const Text(
                 "Available Colors:",
                 style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: 10),
               Row(
