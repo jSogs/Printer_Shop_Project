@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:mongo_dart/mongo_dart.dart' as mongo_dart;
+import '../models/order_card.dart';
 import '/db.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '/models/order_card.dart';
 
-class OrdersPage extends StatefulWidget {
-  const OrdersPage({super.key});
+class ViewOrders  extends StatefulWidget{
+  const ViewOrders({super.key});
 
   @override
-  _OrdersPageState createState() => _OrdersPageState();
+  State<ViewOrders> createState() => _ViewOrdersState();
 }
 
-class _OrdersPageState extends State<OrdersPage>{
+class _ViewOrdersState extends State<ViewOrders> {
   List<Map<String, dynamic>> orders = [];
   bool isLoading = true;
 
   Future<void> fetchOrders() async{
     var db = MongoDBService().db;
     var ordersCollection = db.collection('OrderCluster');
-    final prefs = await SharedPreferences.getInstance();
-    String userId = prefs.getString('unique_id') ?? "";
 
     try {
-      var orderList = await ordersCollection.find(mongo_dart.where.eq('user_id',mongo_dart.ObjectId.parse(userId))).toList();
+      var orderList = await ordersCollection.find().toList();
       setState(() {
         orders = orderList;
       });
@@ -32,7 +28,6 @@ class _OrdersPageState extends State<OrdersPage>{
       return;
     }
   }
-  
   @override
   void initState() {
     super.initState();
@@ -44,7 +39,7 @@ class _OrdersPageState extends State<OrdersPage>{
       isLoading = false;
     });
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +49,7 @@ class _OrdersPageState extends State<OrdersPage>{
           : orders.isEmpty
           ? const Center(
             child: Text(
-              'You have no previous orders',
+              'There are no orders.',
               style: TextStyle(
                 fontSize: 18, // Increase the font size
                 fontWeight: FontWeight.bold, // Make the text bold
@@ -73,7 +68,7 @@ class _OrdersPageState extends State<OrdersPage>{
   AppBar _appBar() {
     return AppBar(
       title: const Text(
-        'Orders',
+        'All Orders',
         style: TextStyle(
           color: Colors.black,
           fontSize: 20,

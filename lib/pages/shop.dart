@@ -36,7 +36,7 @@ class ShopPageState extends State<ShopPage> {
       filteredPrinters = List.from(allPrinters); // Initially show all printers
     });
 
-    print("All Printers: $allPrinters");  // Debug: Print all printers
+    //print("All Printers: $allPrinters");  // Debug: Print all printers
 
     _applyFilters(); // Apply filters after loading the data
   }
@@ -47,14 +47,14 @@ class ShopPageState extends State<ShopPage> {
       activeFilters = selectedFilters;
     });
 
-    print("Selected filters: $selectedFilters");  // Debug: Log selected filters
+    //print("Selected filters: $selectedFilters");  // Debug: Log selected filters
 
     _applyFilters(); // Apply filters whenever the selected filters change
   }
 
   // Apply the active filters to the list of printers
   void _applyFilters() {
-    print("Active Filters: $activeFilters");  // Debug: Log active filters
+    //print("Active Filters: $activeFilters");  // Debug: Log active filters
     if (activeFilters.isEmpty) {
       // No filters, show all printers
       setState(() {
@@ -95,7 +95,7 @@ class ShopPageState extends State<ShopPage> {
         }).toList();
       });
     }
-    print("Filtered Printers: $filteredPrinters");  // Debug: Print filtered printers
+    //print("Filtered Printers: $filteredPrinters");  // Debug: Print filtered printers
   }
 
   @override
@@ -183,6 +183,8 @@ class ShopPageState extends State<ShopPage> {
             const SizedBox(height: 10.0),
             Text(
               name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
@@ -198,6 +200,8 @@ class ShopPageState extends State<ShopPage> {
             ),
             Text(
               description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.grey[600],

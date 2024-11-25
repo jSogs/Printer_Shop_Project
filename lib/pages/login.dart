@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
               // Login Button
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () async {
                   // Retrieve values from controllers
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                     print(user['name']);
                     await saveUniqueId(user['_id'].oid, user['name'].toString());
                     await setLoginState(true);
-                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
                   } else {
                     print("Invalid email or password");
                     // Show error message to the user
@@ -124,14 +124,14 @@ class _LoginPageState extends State<LoginPage> {
                       context: context, 
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Error"),
-                          content: Text("Invalid email or password"),
+                          title: const Text("Error"),
+                          content: const Text("Invalid email or password"),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               }, 
-                              child: Text("OK")
+                              child: const Text("OK")
                             ),
                           ],
                         );
@@ -150,11 +150,11 @@ class _LoginPageState extends State<LoginPage> {
               // Register Button
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () {
                     // direct to register page
-                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => SignUpPage()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignUpPage()));
                 },
                 child: const Text(
                   'Register',
@@ -166,13 +166,13 @@ class _LoginPageState extends State<LoginPage> {
                // ADMIN LOGIN BUTTON (New Button)
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () {
                   // Navigate to the admin sign-in page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AdminSignInPage()),
+                    MaterialPageRoute(builder: (context) => const AdminSignInPage()),
                   );
                 },
                 child: const Text(

@@ -24,7 +24,6 @@ class _AdminSignInPageState extends State<AdminSignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Login'),  // AppBar for admin login page
-        backgroundColor: Colors.black,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,14 +49,15 @@ class _AdminSignInPageState extends State<AdminSignInPage> {
             const SizedBox(height: 20),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
               ),
               onPressed: () {
                 if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
                   // Navigate to AdminHomePage if credentials are correct
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => AdminHomePage()),
+                    MaterialPageRoute(builder: (context) => const AdminHomePage()),
+                    (route) => false, // Remove all previous routes
                   );
                 } else {
                   // Show alert if credentials are incorrect
@@ -65,14 +65,14 @@ class _AdminSignInPageState extends State<AdminSignInPage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Error"),
-                        content: Text("Invalid admin username or password"),
+                        title: const Text("Error"),
+                        content: const Text("Invalid admin username or password"),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text("OK"),
+                            child: const Text("OK"),
                           ),
                         ],
                       );

@@ -66,6 +66,36 @@ class _CartPageState extends State<CartPage>{
     }
   }
 
+  void removeFromCart(String itemId) async {
+    var db = MongoDBService().db;
+    var usersCollection = db.collection('UserCluster');
+    final prefs = await SharedPreferences.getInstance();
+    String userId = prefs.getString('unique_id') ?? "";
+
+    try {
+      // Find the user
+      var user = await usersCollection.findOne({"_id": mongo_dart.ObjectId.parse(userId)});
+      if (user == null) {
+        print("User not found.");
+        return;
+      }
+
+      // Update the user's cart by removing the item with the given ID
+      await usersCollection.updateOne(
+        {"_id": mongo_dart.ObjectId.parse(userId)}, // Match the user by ID
+        {
+          "\$pull": {
+            "cart": {"_id": mongo_dart.ObjectId.parse(itemId)} // Match item by ID in the cart
+          }
+        },
+      );
+      getCart();
+      print("Item removed from cart successfully.");
+    } catch (e) {
+      print("Error removing item from cart: $e");
+    }
+  }
+
   void checkoutCart() {
     if (cart.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,100 +162,158 @@ class _CartPageState extends State<CartPage>{
           );
   }
 
-  Widget cartItem(var item){
-    return GestureDetector(
-      onTap:() {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          builder: (BuildContext context) {
-            return ItemDetailModal(
-              id: item['_id'],
-              name: item['name'],
-              imageURL: item['imageURL'],
-              price: item['price'],
-            );
-          },
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(6.0),
-        margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 0),
-            ),
-          ],
+  Widget cartItem(var item) {
+  return GestureDetector(
+    onTap: () {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(
-              item['imageURL'],
-              height: 40,
-              width: 40,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(width: 10.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                  Text(
-                    item['name'],
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Quantity: ${item['quantity']}',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                      ),
-                      const SizedBox(width: 5),
-                      const Text(
-                        'Color: ',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(item['color'].toInt()),
-                          border: Border.all(
-                            color:Colors.black,
-                            width: 2,
-                          ),
+        builder: (BuildContext context) {
+          return ItemDetailModal(
+            id: item['_id'],
+            name: item['name'],
+            imageURL: item['imageURL'],
+            price: item['price'],
+          );
+        },
+      );
+    },
+    child: Stack(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6.0),
+          margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 2,
+                offset: const Offset(0, 0),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(
+                item['imageURL'],
+                height: 40,
+                width: 40,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item['name'],
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Quantity: ${item['quantity']}',
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.normal),
                         ),
-                        width: 15,
-                        height: 15,
+                        const SizedBox(width: 5),
+                        const Text(
+                          'Color: ',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.normal),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 2.0, vertical: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(item['color'].toInt()),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          width: 15,
+                          height: 15,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                child: Text(
+                  '\$${(double.parse(item['price']) * item['quantity']).toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Remove Item"),
+                    content: Text("Remove ${item['name']} from the cart?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          removeFromCart(item['_id'].oid); // Call the remove function
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text("Yes"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text("No"),
                       ),
                     ],
-                  )
-                ]
+                  );
+                },
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black),
+                color: Colors.transparent,
+              ),
+              child: const Icon(
+                Icons.close,
+                color: Colors.black,
+                size: 18,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-              child: Text(
-                  '\$${(double.parse(item['price']) * item['quantity']).toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 20, color: Colors.grey, ),
-                ),
-            ),
-          ],
-        )
-      )
-    );
-  }
+          ),
+        ),
+
+      ],
+    ),
+  );
+}
+
 
   Widget _checkoutButton(){
     return BottomAppBar(
