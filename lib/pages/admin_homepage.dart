@@ -74,7 +74,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   title: const Text('Edit Users'),
                   onTap: () {
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const EditUsers()),
+                      MaterialPageRoute(builder: (context) => const ViewUsers()),
                     ); // Navigate to EditUsers page
                   },
                 ),
