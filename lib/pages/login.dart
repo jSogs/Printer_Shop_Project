@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 onPressed: () {
                     // direct to register page
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignUpPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage()));
                 },
                 child: const Text(
                   'Register',
