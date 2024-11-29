@@ -184,7 +184,7 @@ class _EditPrintersState extends State<EditPrinters> {
                           'scanner': scanner,
                           'copier': copier,
                           'bothColor': colored,
-                          'type': typeController,
+                          'type': typeController.text,
                         };
 
                         savePrinter(printerData, isEditing: isEditing);
