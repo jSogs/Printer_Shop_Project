@@ -65,31 +65,31 @@ class ShopPageState extends State<ShopPage> {
       setState(() {
         filteredPrinters = allPrinters.where((printer) {
           // Check if the printer type matches any of the selected filters
-          bool matchesAllFilters = true;
+          bool matchesAllFilters = false;
 
-          if (activeFilters.contains('Inkjet') && printer['type'] != 'Inkjet') {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Inkjet') && printer['type'] == 'Inkjet') {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Laser') && printer['type'] != 'Laser') {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Laser') && printer['type'] == 'Laser') {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Dot Matrix') && printer['type'] != 'Dot Matrix') {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Dot Matrix') && printer['type'] == 'Dot Matrix') {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Fax') && printer['fax'] != true) {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Fax') && printer['fax'] == true) {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Copier') && printer['copier'] != true) {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Copier') && printer['copier'] == true) {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Scanner') && printer['scanner'] != true) {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Scanner') && printer['scanner'] == true) {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Full Color') && printer['bothColor'] != true) {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Full Color') && printer['bothColor'] == true) {
+            matchesAllFilters = true;
           }
-          if (activeFilters.contains('Black & White') && printer['bothColor'] != false) {
-            matchesAllFilters = false;
+          if (activeFilters.contains('Black & White') && printer['bothColor'] == false) {
+            matchesAllFilters = true;
           }
           return matchesAllFilters;
         }).toList();

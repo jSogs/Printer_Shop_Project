@@ -190,6 +190,7 @@ class _LoginPageState extends State<LoginPage> {
   // Top Bar
   AppBar _appBar() {
     return AppBar(
+      leading: null,
       title: const Text(
         'Welcome, please login to continue',
         style: TextStyle(

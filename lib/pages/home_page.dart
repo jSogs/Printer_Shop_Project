@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   // Top Bar
   AppBar _appBar() {
     return AppBar(
+      leading: null,
       title: Text(
         pageTitles[currentPageIndex],
         style: const TextStyle(

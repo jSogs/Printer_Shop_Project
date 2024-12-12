@@ -51,8 +51,6 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
           cart.removeAt(i);
         }
       }
-      print(
-          "${widget.id} ${widget.name} ${widget.price} ${selectedColor.toString()} $quantity");
       cart.add({
         '_id': widget.id,
         'name': widget.name,
